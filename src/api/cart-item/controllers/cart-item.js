@@ -3,18 +3,18 @@
 /**
  *  cart-item controller
  */
-const { parseMultipartData } = require("@strapi/utils");
 const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController(
     "api::cart-item.cart-item",
     ({ strapi }) => ({
         async create(ctx) {
-            let cart_id;
+            let cartId;
 
             // Get neccessary data
             const owner = ctx.state.user.id;
-            const { count, product: product_id } = ctx.request.body.data;
+
+            const { count, product: productId } = ctx.request.body.data;
 
             // Get cart that not checked out yet
             let carts = await strapi.entityService.findMany("api::cart.cart", {
@@ -27,7 +27,7 @@ module.exports = createCoreController(
             // Get product price
             let { price } = await strapi.entityService.findOne(
                 "api::product.product",
-                product_id,
+                productId,
                 {
                     fields: ["price"],
                 }
@@ -47,19 +47,20 @@ module.exports = createCoreController(
                         },
                     }
                 );
-                cart_id = id;
+                cartId = id;
             } else {
-                cart_id = carts[0].id;
+                cartId = carts[0].id;
             }
 
-            ctx.request.body.data.cart = cart_id;
+            ctx.request.body.data.cart = cartId;
+
             const { data, meta } = await super.create(ctx);
 
-            await strapi
+            const cart = await strapi
                 .service("api::cart.cart")
-                .addItem(cart_id, { count, total });
+                .updateValues(cartId);
 
-            return { data, meta };
+            return { data, meta, cart };
         },
     })
 );
