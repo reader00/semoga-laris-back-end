@@ -112,3 +112,5 @@ exports
 *.cache
 build
 .strapi-updater.json
+
+!semoga_laris_db.sql
