@@ -7,20 +7,37 @@
 const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService("api::cart.cart", ({ strapi }) => ({
-    async addItem(cart_id, { count, total }) {
+    async updateValues(cartId) {
         // get cart
+        let total = 0,
+            count = 0;
+
         let cart = await strapi.entityService.findOne(
             "api::cart.cart",
-            cart_id,
+            cartId,
             {
-                fields: ["count", "total"],
+                populate: {
+                    cart_items: {
+                        fields: ["count"],
+                        populate: {
+                            product: {
+                                fields: ["price"],
+                            },
+                        },
+                    },
+                },
             }
         );
 
-        count = Number(count) + Number(cart.count);
-        total = Number(total) + Number(cart.total);
+        for (let item of cart.cart_items) {
+            const itemCount = item.count;
+            const itemPrice = item.product.price;
 
-        await strapi.entityService.update("api::cart.cart", cart_id, {
+            count += parseInt(itemCount);
+            total += parseInt(itemCount) * parseInt(itemPrice);
+        }
+
+        await strapi.entityService.update("api::cart.cart", cartId, {
             data: {
                 count,
                 total,
