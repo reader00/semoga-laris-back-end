@@ -4,18 +4,14 @@
   "info": {
     "singularName": "cart-item",
     "pluralName": "cart-items",
-    "displayName": "Cart Item"
+    "displayName": "Cart Item",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "cart": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::cart.cart"
-    },
     "product": {
       "type": "relation",
       "relation": "oneToOne",
@@ -24,6 +20,11 @@
     "count": {
       "type": "integer",
       "required": true
+    },
+    "cart": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::cart.cart"
     }
   }
 }
