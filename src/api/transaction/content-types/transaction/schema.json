@@ -22,6 +22,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::cart.cart"
+    },
+    "transaction_detail": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::transaction-detail.transaction-detail",
+      "inversedBy": "transaction"
     }
   }
 }

@@ -23,8 +23,9 @@
     },
     "cart": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::cart.cart"
+      "relation": "manyToOne",
+      "target": "api::cart.cart",
+      "inversedBy": "cart_items"
     }
   }
 }
