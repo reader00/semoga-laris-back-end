@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "transaction_details",
+  "info": {
+    "singularName": "transaction-detail",
+    "pluralName": "transaction-details",
+    "displayName": "Transaction Detail",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "payment_status": {
+      "type": "boolean",
+      "default": false
+    },
+    "name": {
+      "type": "string"
+    },
+    "address": {
+      "type": "text"
+    },
+    "province": {
+      "type": "string"
+    },
+    "regency": {
+      "type": "string"
+    },
+    "zip_code": {
+      "type": "string"
+    },
+    "phone_number": {
+      "type": "string"
+    },
+    "transaction": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::transaction.transaction"
+    },
+    "shipping_fee": {
+      "type": "biginteger"
+    }
+  }
+}
