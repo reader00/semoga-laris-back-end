@@ -14,27 +14,10 @@ module.exports = createCoreController(
             // Get neccessary data
             const owner = ctx.state.user.id;
 
-            const { count, product: productId } = ctx.request.body.data;
-
             // Get cart that not checked out yet
-            let carts = await strapi.entityService.findMany("api::cart.cart", {
-                filters: {
-                    owner,
-                    is_checked_out: false,
-                },
-            });
-
-            // Get product price
-            let { price } = await strapi.entityService.findOne(
-                "api::product.product",
-                productId,
-                {
-                    fields: ["price"],
-                }
-            );
-
-            // Get total price
-            const total = Number(price) * Number(count);
+            let carts = await strapi
+                .service("api::cart-item.cart-item")
+                ._getCarts(owner);
 
             // Check if there is no cart
             if (!carts.length) {
@@ -56,11 +39,102 @@ module.exports = createCoreController(
 
             const { data, meta } = await super.create(ctx);
 
-            const cart = await strapi
-                .service("api::cart.cart")
-                .updateValues(cartId);
+            await strapi.service("api::cart.cart").updateValues(cartId);
 
-            return { data, meta, cart };
+            return { data, meta };
+        },
+
+        async update(ctx) {
+            // Get and set neccessary data
+            const owner = ctx.state.user.id;
+
+            ctx.query = {
+                ...ctx.query,
+                populate: {
+                    cart: {
+                        fields: ["id"],
+                        populate: {
+                            owner: {
+                                fields: ["id"],
+                            },
+                        },
+                    },
+                },
+            };
+
+            // Get original data
+            const cartItem = await super.findOne(ctx);
+
+            // Check ownership
+            if (
+                owner !==
+                cartItem.data.attributes.cart.data.attributes.owner.data.id
+            ) {
+                ctx.forbidden("Forbidden Error");
+            }
+
+            delete ctx.request.query.populate;
+
+            // Get cart
+            let carts = await strapi
+                .service("api::cart-item.cart-item")
+                ._getCarts(owner);
+
+            const cartId = carts[0].id;
+
+            // Get original data
+            const { data, meta } = await super.update(ctx);
+
+            // Update cart
+            await strapi.service("api::cart.cart").updateValues(cartId);
+
+            return { data, meta };
+        },
+
+        async delete(ctx) {
+            // Get and set neccessary data
+            const owner = ctx.state.user.id;
+            ctx.query = {
+                ...ctx.query,
+                populate: {
+                    cart: {
+                        fields: ["id"],
+                        populate: {
+                            owner: {
+                                fields: ["id"],
+                            },
+                        },
+                    },
+                },
+            };
+
+            // Get original data
+            const cartItem = await super.findOne(ctx);
+
+            // Check ownership
+            if (
+                owner !==
+                cartItem.data.attributes.cart.data.attributes.owner.data.id
+            ) {
+                ctx.forbidden("Forbidden Error");
+            }
+
+            delete ctx.request.query.populate;
+
+            // Get carts
+            let carts = await strapi
+                .service("api::cart-item.cart-item")
+                ._getCarts(owner);
+
+            const cartId = carts[0].id;
+
+            // Get original data
+            const { data, meta } = await super.delete(ctx);
+
+            // Update cart
+            await strapi.service("api::cart.cart").updateValues(cartId);
+
+            return { data, meta };
         },
     })
 );
