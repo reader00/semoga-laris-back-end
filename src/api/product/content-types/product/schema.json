@@ -30,8 +30,9 @@
     },
     "categories": {
       "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::category.category"
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "inversedBy": "products"
     },
     "image": {
       "type": "string",
@@ -41,6 +42,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::color.color"
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "product"
     }
   }
 }
