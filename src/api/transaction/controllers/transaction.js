@@ -25,5 +25,33 @@ module.exports = createCoreController(
 
             return { data, meta };
         },
+
+        async findOne(ctx) {
+            const userId = ctx.state.user.id;
+            const { id } = ctx.params;
+
+            await strapi
+                .service("api::transaction.transaction")
+                .checkOwnership(id, userId);
+
+            const { data, meta } = await super.findOne(ctx);
+
+            return { data, meta };
+        },
+
+        async find(ctx) {
+            const userId = ctx.state.user.id;
+            ctx.query = {
+                ...ctx.query,
+                filters: {
+                    ...ctx.query.filters,
+                    owner: userId,
+                },
+            };
+
+            const { data, meta } = await super.find(ctx);
+
+            return { data, meta };
+        },
     })
 );
