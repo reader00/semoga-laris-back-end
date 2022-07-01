@@ -44,4 +44,12 @@ module.exports = createCoreService("api::cart.cart", ({ strapi }) => ({
             },
         });
     },
+
+    async check_out(cartId) {
+        await strapi.entityService.update("api::cart.cart", cartId, {
+            data: {
+                is_checked_out: true,
+            },
+        });
+    },
 }));
