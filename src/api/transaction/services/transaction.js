@@ -22,22 +22,46 @@ module.exports = createCoreService(
             const params = {
                 populate: {
                     owner: {
-                        fields: "id",
+                        fields: ["id"],
                     },
                 },
             };
 
             // Get original data
-            const transacation = await strapi.entityService.findOne(
-                "api::transaction.transacation",
+            const transaction = await strapi.entityService.findOne(
+                "api::transaction.transaction",
                 transactionId,
                 params
             );
 
             // Check ownership
-            if (userId !== transacation.owner.id) {
-                ctx.forbidden("Forbidden Error");
+            if (!transaction || userId !== transaction.owner.id) {
+                return false;
             }
+
+            return true;
+        },
+
+        async confirmPayment(transactionId) {
+            const params = {
+                data: {
+                    payment_status: "confirmed",
+                },
+            };
+
+            const transaction = await strapi.entityService.findOne(
+                "api::transaction.transaction",
+                transactionId
+            );
+            if (transaction.payment_status !== "pending") {
+                return false;
+            }
+
+            await strapi.entityService.update(
+                "api::transaction.transaction",
+                transactionId,
+                params
+            );
         },
     })
 );
