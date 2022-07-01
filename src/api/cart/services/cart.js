@@ -52,4 +52,32 @@ module.exports = createCoreService("api::cart.cart", ({ strapi }) => ({
             },
         });
     },
+
+    async checkOwnership(ctx) {
+        // Get and set neccessary data
+        const owner = ctx.state.user.id;
+        const { id } = ctx.params;
+        const params = {
+            filters: {
+                owner,
+            },
+            populate: {
+                owner: {
+                    fields: "id",
+                },
+            },
+        };
+
+        // Get original data
+        const cart = await strapi.entityService.findOne(
+            "api::cart.cart",
+            id,
+            params
+        );
+
+        // Check ownership
+        if (owner !== cart.owner.id) {
+            ctx.forbidden("Forbidden Error");
+        }
+    },
 }));
