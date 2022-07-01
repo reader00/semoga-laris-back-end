@@ -45,40 +45,17 @@ module.exports = createCoreController(
         },
 
         async update(ctx) {
-            // Get and set neccessary data
-            const owner = ctx.state.user.id;
+            const { id } = ctx.params;
+            const userId = ctx.state.user.id;
 
-            ctx.query = {
-                ...ctx.query,
-                populate: {
-                    cart: {
-                        fields: ["id"],
-                        populate: {
-                            owner: {
-                                fields: ["id"],
-                            },
-                        },
-                    },
-                },
-            };
-
-            // Get original data
-            const cartItem = await super.findOne(ctx);
-
-            // Check ownership
-            if (
-                owner !==
-                cartItem.data.attributes.cart.data.attributes.owner.data.id
-            ) {
-                ctx.forbidden("Forbidden Error");
-            }
-
-            delete ctx.request.query.populate;
+            await strapi
+                .service("api::cart-item.cart-item")
+                .checkOwnership(id, userId);
 
             // Get cart
             let carts = await strapi
                 .service("api::cart-item.cart-item")
-                ._getCarts(owner);
+                ._getCarts(userId);
 
             const cartId = carts[0].id;
 
@@ -93,38 +70,17 @@ module.exports = createCoreController(
 
         async delete(ctx) {
             // Get and set neccessary data
-            const owner = ctx.state.user.id;
-            ctx.query = {
-                ...ctx.query,
-                populate: {
-                    cart: {
-                        fields: ["id"],
-                        populate: {
-                            owner: {
-                                fields: ["id"],
-                            },
-                        },
-                    },
-                },
-            };
+            const { id } = ctx.params;
+            const userId = ctx.state.user.id;
 
-            // Get original data
-            const cartItem = await super.findOne(ctx);
-
-            // Check ownership
-            if (
-                owner !==
-                cartItem.data.attributes.cart.data.attributes.owner.data.id
-            ) {
-                ctx.forbidden("Forbidden Error");
-            }
-
-            delete ctx.request.query.populate;
+            await strapi
+                .service("api::cart-item.cart-item")
+                .checkOwnership(id, userId);
 
             // Get carts
             let carts = await strapi
                 .service("api::cart-item.cart-item")
-                ._getCarts(owner);
+                ._getCarts(userId);
 
             const cartId = carts[0].id;
 
