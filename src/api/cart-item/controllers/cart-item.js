@@ -48,9 +48,14 @@ module.exports = createCoreController(
             const { id } = ctx.params;
             const userId = ctx.state.user.id;
 
-            await strapi
+            // Check ownership
+            const isOwn = await strapi
                 .service("api::cart-item.cart-item")
                 .checkOwnership(id, userId);
+            if (!isOwn) {
+                strapi.log.debug(!isOwn);
+                ctx.forbidden("You have no right to access this data");
+            }
 
             // Get cart
             let carts = await strapi
@@ -73,9 +78,13 @@ module.exports = createCoreController(
             const { id } = ctx.params;
             const userId = ctx.state.user.id;
 
-            await strapi
+            // Check ownership
+            const isOwn = await strapi
                 .service("api::cart-item.cart-item")
                 .checkOwnership(id, userId);
+            if (!isOwn) {
+                ctx.forbidden("You have no right to access this data");
+            }
 
             // Get carts
             let carts = await strapi

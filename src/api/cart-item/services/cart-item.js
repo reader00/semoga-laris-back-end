@@ -40,13 +40,12 @@ module.exports = createCoreService(
                 params
             );
 
-            strapi.log.debug(`Id: ${cartItemId}`);
-            strapi.log.debug(JSON.stringify(cartItem));
-
             // Check ownership
-            if (cartItem && userId !== cartItem.cart.owner.id) {
-                ctx.forbidden("Forbidden Error");
+            if (!cartItem || userId !== cartItem.cart.owner.id) {
+                return false;
             }
+
+            return true;
         },
     })
 );

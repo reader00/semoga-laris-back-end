@@ -43,7 +43,14 @@ module.exports = createCoreController("api::cart.cart", ({ strapi }) => ({
         const { id } = ctx.params;
         const userId = ctx.state.user.id;
 
-        await strapi.service("api::cart.cart").checkOwnership(id, userId);
+        // Check ownership
+        const isOwn = await strapi
+            .service("api::cart.cart")
+            .checkOwnership(id, userId);
+
+        if (!isOwn) {
+            ctx.forbidden("You have no right to access this data");
+        }
 
         // Delete attribute owner
         const { data, meta } = await super.findOne(ctx);
