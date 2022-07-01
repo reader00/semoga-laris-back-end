@@ -5,5 +5,11 @@ module.exports = {
             path: "/carts/order",
             handler: "transaction.create",
         },
+
+        {
+            method: "POST",
+            path: "/transactions/confirm",
+            handler: "transaction.confirm",
+        },
     ],
 };

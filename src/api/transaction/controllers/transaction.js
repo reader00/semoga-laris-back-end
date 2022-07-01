@@ -30,9 +30,14 @@ module.exports = createCoreController(
             const userId = ctx.state.user.id;
             const { id } = ctx.params;
 
-            await strapi
+            // Check ownership
+            const isOwn = await strapi
                 .service("api::transaction.transaction")
                 .checkOwnership(id, userId);
+
+            if (!isOwn) {
+                ctx.forbidden("You have no right to access this data");
+            }
 
             const { data, meta } = await super.findOne(ctx);
 
@@ -50,6 +55,41 @@ module.exports = createCoreController(
             };
 
             const { data, meta } = await super.find(ctx);
+
+            return { data, meta };
+        },
+
+        async confirm(ctx) {
+            const userId = ctx.state.user.id;
+            const { transaction: id } = ctx.request.body.data;
+            ctx.request.body.data.is_paid = true;
+            ctx.params.id = id;
+
+            // Check ownership
+            const isOwn = await strapi
+                .service("api::transaction.transaction")
+                .checkOwnership(id, userId);
+
+            if (!isOwn) {
+                ctx.forbidden("You have no right to access this data");
+            }
+
+            await strapi
+                .service("api::transaction.transaction")
+                .confirmPayment(id);
+
+            const { data, meta } = await super.findOne(ctx);
+
+            return { data, meta };
+        },
+
+        async update(ctx) {
+            ctx.request.body.data = {
+                ...ctx.request.body.data,
+                payment_status: false,
+            };
+
+            const { data, meta } = await super.update(ctx);
 
             return { data, meta };
         },

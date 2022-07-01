@@ -57,7 +57,7 @@ module.exports = createCoreService("api::cart.cart", ({ strapi }) => ({
         const params = {
             populate: {
                 owner: {
-                    fields: "id",
+                    fields: ["id"],
                 },
             },
         };
@@ -68,10 +68,13 @@ module.exports = createCoreService("api::cart.cart", ({ strapi }) => ({
             cartId,
             params
         );
+        strapi.log.debug(JSON.stringify(cart));
 
         // Check ownership
-        if (userId !== cart.owner.id) {
-            ctx.forbidden("Forbidden Error");
+        if (!cart || userId !== cart.owner.id) {
+            return false;
         }
+
+        return true;
     },
 }));

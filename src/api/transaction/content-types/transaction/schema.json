@@ -27,7 +27,17 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::transaction-detail.transaction-detail",
-      "inversedBy": "transaction"
+      "mappedBy": "transaction"
+    },
+    "payment_status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "canceled",
+        "expired",
+        "confirmed"
+      ],
+      "default": "pending"
     }
   }
 }

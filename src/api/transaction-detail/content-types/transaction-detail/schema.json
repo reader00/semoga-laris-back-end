@@ -12,10 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "payment_status": {
-      "type": "boolean",
-      "default": false
-    },
     "name": {
       "type": "string"
     },
