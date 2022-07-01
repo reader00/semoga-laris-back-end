@@ -40,7 +40,8 @@ module.exports = createCoreController("api::cart.cart", ({ strapi }) => ({
     },
 
     async findOne(ctx) {
-        await strapi.service("api::cart.cart").checkOwnership(ctx);
+        const { id } = ctx.params;
+        await strapi.service("api::cart.cart").checkOwnership(id, ctx);
 
         // Delete attribute owner
         const { data, meta } = await super.findOne(ctx);
