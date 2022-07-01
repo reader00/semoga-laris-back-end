@@ -21,7 +21,7 @@ module.exports = createCoreController(
                 .service("api::transaction.transaction")
                 .createTransactionDetail(transactionId, ctx);
 
-            await strapi.service("api::cart.cart").check_out(cartId);
+            await strapi.service("api::cart.cart").checkOut(cartId);
 
             return { data, meta };
         },
