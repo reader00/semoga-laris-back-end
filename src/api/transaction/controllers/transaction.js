@@ -36,7 +36,7 @@ module.exports = createCoreController(
                 .checkOwnership(id, userId);
 
             if (!isOwn) {
-                ctx.forbidden("You have no right to access this data");
+                return ctx.forbidden("You have no right to access this data");
             }
 
             const { data, meta } = await super.findOne(ctx);
@@ -71,12 +71,12 @@ module.exports = createCoreController(
                 .checkOwnership(id, userId);
 
             if (!isOwn) {
-                ctx.forbidden("You have no right to access this data");
+                return ctx.forbidden("You have no right to access this data");
             }
 
             await strapi
                 .service("api::transaction.transaction")
-                .confirmPayment(id);
+                .updatePayment(id, "confirmed");
 
             const { data, meta } = await super.findOne(ctx);
 
@@ -90,6 +90,30 @@ module.exports = createCoreController(
             };
 
             const { data, meta } = await super.update(ctx);
+
+            return { data, meta };
+        },
+
+        async cancel(ctx) {
+            const userId = ctx.state.user.id;
+            const { transaction: id } = ctx.request.body.data;
+            ctx.request.body.data.is_paid = true;
+            ctx.params.id = id;
+
+            // Check ownership
+            const isOwn = await strapi
+                .service("api::transaction.transaction")
+                .checkOwnership(id, userId);
+
+            if (!isOwn) {
+                return ctx.forbidden("You have no right to access this data");
+            }
+
+            await strapi
+                .service("api::transaction.transaction")
+                .updatePayment(id, "canceled");
+
+            const { data, meta } = await super.findOne(ctx);
 
             return { data, meta };
         },

@@ -49,7 +49,7 @@ module.exports = createCoreController("api::cart.cart", ({ strapi }) => ({
             .checkOwnership(id, userId);
 
         if (!isOwn) {
-            ctx.forbidden("You have no right to access this data");
+            return ctx.forbidden("You have no right to access this data");
         }
 
         // Delete attribute owner

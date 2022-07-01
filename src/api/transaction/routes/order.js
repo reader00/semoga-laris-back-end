@@ -11,5 +11,11 @@ module.exports = {
             path: "/transactions/confirm",
             handler: "transaction.confirm",
         },
+
+        {
+            method: "POST",
+            path: "/transactions/cancel",
+            handler: "transaction.cancel",
+        },
     ],
 };
