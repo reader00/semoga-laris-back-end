@@ -45,11 +45,33 @@ module.exports = createCoreService("api::cart.cart", ({ strapi }) => ({
         });
     },
 
-    async check_out(cartId) {
+    async checkOut(cartId) {
         await strapi.entityService.update("api::cart.cart", cartId, {
             data: {
                 is_checked_out: true,
             },
         });
+    },
+
+    async checkOwnership(cartId, userId) {
+        const params = {
+            populate: {
+                owner: {
+                    fields: "id",
+                },
+            },
+        };
+
+        // Get original data
+        const cart = await strapi.entityService.findOne(
+            "api::cart.cart",
+            cartId,
+            params
+        );
+
+        // Check ownership
+        if (userId !== cart.owner.id) {
+            ctx.forbidden("Forbidden Error");
+        }
     },
 }));

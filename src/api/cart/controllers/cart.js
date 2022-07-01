@@ -40,27 +40,13 @@ module.exports = createCoreController("api::cart.cart", ({ strapi }) => ({
     },
 
     async findOne(ctx) {
-        // Get and set neccessary data
-        const owner = ctx.state.user.id;
-        ctx.query = {
-            ...ctx.query,
-            populate: {
-                owner: {
-                    fields: ["id"],
-                },
-            },
-        };
+        const { id } = ctx.params;
+        const userId = ctx.state.user.id;
 
-        // Get original data
-        const { data, meta } = await super.findOne(ctx);
-
-        // Check ownership
-        if (owner !== data.attributes.owner.data.id) {
-            ctx.forbidden("Forbidden Error");
-        }
+        await strapi.service("api::cart.cart").checkOwnership(id, userId);
 
         // Delete attribute owner
-        delete data.attributes.owner;
+        const { data, meta } = await super.findOne(ctx);
 
         return { data, meta };
     },
