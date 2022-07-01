@@ -53,8 +53,7 @@ module.exports = createCoreController(
                 .service("api::cart-item.cart-item")
                 .checkOwnership(id, userId);
             if (!isOwn) {
-                strapi.log.debug(!isOwn);
-                ctx.forbidden("You have no right to access this data");
+                return ctx.forbidden("You have no right to access this data");
             }
 
             // Get cart
@@ -83,7 +82,7 @@ module.exports = createCoreController(
                 .service("api::cart-item.cart-item")
                 .checkOwnership(id, userId);
             if (!isOwn) {
-                ctx.forbidden("You have no right to access this data");
+                return ctx.forbidden("You have no right to access this data");
             }
 
             // Get carts

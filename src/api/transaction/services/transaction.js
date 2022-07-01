@@ -42,10 +42,10 @@ module.exports = createCoreService(
             return true;
         },
 
-        async confirmPayment(transactionId) {
+        async updatePayment(transactionId, status) {
             const params = {
                 data: {
-                    payment_status: "confirmed",
+                    payment_status: status,
                 },
             };
 
