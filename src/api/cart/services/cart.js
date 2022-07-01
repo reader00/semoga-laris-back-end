@@ -53,14 +53,8 @@ module.exports = createCoreService("api::cart.cart", ({ strapi }) => ({
         });
     },
 
-    async checkOwnership(cartId, ctx) {
-        // Get and set neccessary data
-        const owner = ctx.state.user.id;
-
+    async checkOwnership(cartId, userId) {
         const params = {
-            filters: {
-                owner,
-            },
             populate: {
                 owner: {
                     fields: "id",
@@ -76,7 +70,7 @@ module.exports = createCoreService("api::cart.cart", ({ strapi }) => ({
         );
 
         // Check ownership
-        if (owner !== cart.owner.id) {
+        if (userId !== cart.owner.id) {
             ctx.forbidden("Forbidden Error");
         }
     },
