@@ -39,6 +39,9 @@ module.exports = createCoreService("api::cart.cart", ({ strapi }) => ({
             productPrice += parseInt(itemCount) * parseInt(itemPrice);
             shippingFee += 10000;
         }
+        if (cart.cart_items.length === 0) {
+            shippingFee = 0;
+        }
         total = productPrice + shippingFee;
 
         await strapi.entityService.update("api::cart.cart", cartId, {
