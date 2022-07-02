@@ -36,6 +36,8 @@ module.exports = createCoreController("api::cart.cart", ({ strapi }) => ({
             meta = cart.meta;
         }
 
+        await strapi.service("api::cart.cart").updateValues(data[0].id);
+
         return { data, meta };
     },
 

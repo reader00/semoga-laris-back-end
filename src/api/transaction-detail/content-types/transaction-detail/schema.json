@@ -13,31 +13,34 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "address": {
-      "type": "text"
+      "type": "text",
+      "required": true
     },
     "province": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "regency": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "zip_code": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "phone_number": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "transaction": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::transaction.transaction",
       "inversedBy": "transaction_detail"
-    },
-    "shipping_fee": {
-      "type": "biginteger"
     }
   }
 }
