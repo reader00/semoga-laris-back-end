@@ -11,8 +11,16 @@ module.exports = createCoreController(
     ({ strapi }) => ({
         async create(ctx) {
             const owner = ctx.state.user.id;
-            const cartId = ctx.request.body.data.cart;
+
+            // Get carts
+            let carts = await strapi
+                .service("api::cart-item.cart-item")
+                ._getCarts(owner);
+
+            const cartId = carts[0].id;
+            strapi.log.debug(JSON.stringify(ctx.request.body));
             ctx.request.body.data.owner = owner;
+            ctx.request.body.data.cart = cartId;
 
             const { data, meta } = await super.create(ctx);
             const transactionId = data.id;
